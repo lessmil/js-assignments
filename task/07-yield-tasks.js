@@ -33,7 +33,16 @@
  *
  */
 function* get99BottlesOfBeer() {
-    throw new Error('Not implemented');
+    yield '99 bottles of beer on the wall, 99 bottles of beer.';
+    for(let i = 98; i > 1; i--){
+        yield `Take one down and pass it around, ${i} bottles of beer on the wall.`;
+        yield `${i} bottles of beer on the wall, ${i} bottles of beer.`;
+    }
+    yield 'Take one down and pass it around, 1 bottle of beer on the wall.';
+    yield '1 bottle of beer on the wall, 1 bottle of beer.';
+    yield 'Take one down and pass it around, no more bottles of beer on the wall.';
+    yield 'No more bottles of beer on the wall, no more bottles of beer.';
+    yield 'Go to the store and buy some more, 99 bottles of beer on the wall.';
 }
 
 
@@ -47,7 +56,16 @@ function* get99BottlesOfBeer() {
  *
  */
 function* getFibonacciSequence() {
-    throw new Error('Not implemented');
+    yield 0;
+    yield 1;
+
+    let num1 = 0;
+    let num2 = 1;
+
+    while(true){
+        yield num1 + num2;
+        [num1, num2] = [num2, num1 + num2];
+    }
 }
 
 
@@ -82,7 +100,17 @@ function* getFibonacciSequence() {
  *
  */
 function* depthTraversalTree(root) {
-    throw new Error('Not implemented');
+    const seq = [];
+
+    seq.push(root);
+
+    for (let i = 0; i < seq.length; i++) {
+        const node = seq[i];
+
+        if (node.children) seq.splice((i + 1), 0, ...node.children);
+
+        yield node;
+    }
 }
 
 
@@ -108,7 +136,21 @@ function* depthTraversalTree(root) {
  *
  */
 function* breadthTraversalTree(root) {
-    throw new Error('Not implemented');
+    const seq = [];
+
+    seq.push(root);
+
+    for (let i = 0; i < seq.length; i++) {
+        const node = seq[i];
+
+        if (node.children) {
+            for (let j = 0; j < node.children.length; j++){
+                seq.push(node.children[j]);
+            }
+        }
+
+        yield node;
+    }
 }
 
 
@@ -126,7 +168,28 @@ function* breadthTraversalTree(root) {
  *   [ 1, 3, 5, ... ], [ -1 ] => [ -1, 1, 3, 5, ...]
  */
 function* mergeSortedSequences(source1, source2) {
-    throw new Error('Not implemented');
+    let it1 = source1();
+    let it2 = source2();
+    const f = {};
+    const s = {};
+    f.flag = true;
+    s.flag = true;
+    while(true){
+        if (f.flag) f.val = it1.next().value;
+        if (s.flag) s.val = it2.next().value;
+        if (f.val === undefined) f.flag = false;
+        if (s.val === undefined) s.flag = false;
+        if (f.flag && s.flag)
+            if (f.val > s.val){
+                yield s.val;
+                yield f.val;
+            } else {
+            yield f.val;
+                yield s.val;
+            }
+        else if (f.flag) yield f.val;
+        else if (s.flag) yield s.val;
+    }
 }
 
 
